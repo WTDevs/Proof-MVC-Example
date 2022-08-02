@@ -1,0 +1,450 @@
+﻿@model Proof.Core.ViewModels.IncidentsVM
+
+<link href="~/Content/DataTables/css/jquery.dataTables.css" rel="stylesheet" />
+<link href="~/Content/NotRecommendedForMobileDevice.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css" />
+
+<div>
+    @using (Html.BeginForm("filterIncidentReports", "Incidents", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row" style="margin-top:20px">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-addon" id="Event">Event</span>
+                    @Html.DropDownList("ddlEvent", Model.FilterOptions.EventOptions, "[ ALL ]", new { @class = "form-control filter-item", @placeholder = "Event" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-addon" id="AssignedTo">Assigned To</span>
+                    @Html.DropDownList("ddlAssignedTo", Model.FilterOptions.AssignedToOptions, "[ ALL ]", new { @class = "form-control filter-item", @placeholder = "AssignedTo" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="FMA">FMA</span>
+                    @Html.DropDownList("ddlFMA", Model.FilterOptions.FMAOptions, "[ ALL ]", new { @class = "form-control filter-item", @placeholder = "FMA" })
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:20px">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="Status">Status</span>
+                    @Html.DropDownList("ddlStatus", Model.FilterOptions.StatusOptions, "[ ALL ]", new { @class = "form-control filter-item", @placeholder = "Status" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="CustomerImpact">Customer Impact</span>
+                    @Html.DropDownList("ddlCustomerImpact", Model.FilterOptions.CustomerImpactOptions, "[ ALL ]", new { @class = "form-control filter-item", @placeholder = "CustomerImpact" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="StartDate">Start Date</span>
+                    <input class="form-control" type="date" data-val="true"
+                           id="dtStartDate" name="dtStartDate" value="@Model.FilterOptions.StartDate">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="input-group">
+                    <span class="input-group-addon" id="EndDate">End Date</span>
+                    <input class="form-control" type="date" data-val="true"
+                           id="dtEndDate" name="dtEndDate" value="@Model.FilterOptions.EndDate">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:5px">
+            <div class="col-sm-2">
+            </div>
+        </div>
+        <div class="row" style="margin-top:5px">
+            <div class="col-sm-2">
+            </div>
+        </div>
+        <div class="row" style="margin-top:5px">
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <input type="submit" name="submitButton" formmethod="post" id="RunFilter" value="Run Filter" class="btn btn-primary" style="width:130px; margin-right:20px;" />
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <input type="button" name="resetFilterButton" onclick="location.href='@Url.Action("Index", "Incidents")'" id="ResetFilter" value="Reset" class="btn btn-danger" style="width:130px; margin-right:20px;" />
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top:5px">
+            <div class="col-sm-2">
+            </div>
+        </div>
+        <div class="row" style="margin-top:5px">
+            <div class="col-sm-2">
+            </div>
+        </div>
+    }
+
+    <div class="row" style="margin-top:5px">
+        <div class="col-sm-2">
+            @using (Html.BeginForm("RunExportDataToExcel", "Incidents", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.Hidden("ddlEvent", (object)ViewBag.ddlEvent)
+                @Html.Hidden("ddlAssignedTo", (object)ViewBag.ddlAssignedTo)
+                @Html.Hidden("ddlFMA", (object)ViewBag.ddlFMA)
+                @Html.Hidden("ddlStatus", (object)ViewBag.ddlStatus)
+                @Html.Hidden("ddlCustomerImpact", (object)ViewBag.ddlCustomerImpact)
+                @Html.Hidden("startDate", (object)ViewBag.startDate)
+                @Html.Hidden("endDate", (object)ViewBag.endDate)
+                @Html.Hidden("ExportType", "ExportByFilter")
+
+                <div style="text-align:left;">
+                    <input name="submitButtonExport" formmethod="post" class="btn btn-primary my-1 mx-2 px-3" type="submit" value="Export Details to Excel" />
+                </div>
+            }
+        </div>
+        <div class="col-sm-2">
+            @using (Html.BeginForm("RunExportDataToExcel", "Incidents", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.Hidden("ddlEvent", (object)ViewBag.ddlEvent)
+                @Html.Hidden("ddlAssignedTo", (object)ViewBag.ddlAssignedTo)
+                @Html.Hidden("ddlFMA", (object)ViewBag.ddlFMA)
+                @Html.Hidden("ddlStatus", (object)ViewBag.ddlStatus)
+                @Html.Hidden("ddlCustomerImpact", (object)ViewBag.ddlCustomerImpact)
+                @Html.Hidden("startDate", (object)ViewBag.startDate)
+                @Html.Hidden("endDate", (object)ViewBag.endDate)
+                @Html.Hidden("ExportType", "ExportByEvent")
+
+                <div style="text-align:left;">
+                    <input name="submitButtonExport" id="ExportDataByEvent" formmethod="post" class="btn btn-primary my-1 mx-2 px-3" type="submit" value="Export by Event" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:5px">
+        <div class="col-sm-2">
+        </div>
+    </div>
+    <div class="row" style="margin-top:5px">
+        <div class="col-sm-2">
+        </div>
+    </div>
+    <div class="row" style="margin-top:5px">
+        <div class="col-sm-2">
+        </div>
+    </div>
+
+    <p>
+        <a id="ColumnSelectionsDiv">Hide Column Selections</a>
+    </p>
+
+    <div id="ColumnSelections" style="height:60px">
+        <div style="font-size:medium;">
+            <a class="toggle-vis" id="data-column-2" data-column="2">Description</a>  -
+            <a class="toggle-vis" id="data-column-3" data-column="3">Customer Impacting</a>  -
+            <a class="toggle-vis" id="data-column-4" data-column="4">Conditions Name</a>  -
+            <a class="toggle-vis" id="data-column-5" data-column="5">Priority</a>  -
+            <a class="toggle-vis" id="data-column-6" data-column="6">House #</a> -
+            <a class="toggle-vis" id="data-column-7" data-column="7">Street</a>  -
+            <a class="toggle-vis" id="data-column-8" data-column="8">City</a>  -
+            <a class="toggle-vis" id="data-column-9" data-column="9">State</a>  -
+            <a class="toggle-vis" id="data-column-10" data-column="10">Fma</a> -
+            <a class="toggle-vis" id="data-column-11" data-column="11">Status</a>  -
+            <a class="toggle-vis" id="data-column-12" data-column="12">Assigned To</a>
+        </div>
+    </div>
+
+    <table id="incidentTable" class="table table-striped table-condensed table-bordered table-hover request-table">
+        <thead bgcolor="#B6D0E2">
+            <tr>
+                <th>
+                    &nbsp;
+                </th>
+                <th>
+                    &nbsp;
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].CustomerImpact)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].XrCondition.Conditions)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].XrPriority.Priority)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].HouseNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].StreetName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].CityCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].StateCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].FMA)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].XrStatu.Status)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IncidentsList[0].AssignTo)
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.IncidentsList)
+            {
+                <tr>
+                    <td>
+                        <input type="button" onclick="sendData(`@item.PoleFromNumber`, `@item.PoleToNumber`, `@item.Spans`, `@item.CableFootage`, `@item.Description`);" value="Dtl / Desc" class="btn btn-info btn-sm">
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "Details", new { id = item.IncidentID })
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.XrEvent.Event)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.CustomerImpact)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.XrCondition.Conditions)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.XrPriority.Priority)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.HouseNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.StreetName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.CityCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.StateCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.FMA)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.XrStatu.Status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.AssignTo)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/utils")
+
+    <script>
+
+    $(document).ready(function () {
+
+        var table = $('#incidentTable').DataTable({
+            pageLength: 10,
+            paging: true,
+            searching: true,
+            order: [[0, "asc"]],
+            columns: [
+                { orderable: true },
+                { orderable: false },
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
+        });
+
+        $("#ExportDataByEvent").prop("disabled", true);
+
+        $('#ddlEvent').change(function () {
+            $("#ExportDataByEvent").prop("disabled", false);
+        });
+
+        if ($('#ddlEvent').val() != '') {
+            $("#ExportDataByEvent").prop("disabled", false);
+        }
+
+        if ($("#ResetFilter").click(function () {
+            $("#ExportDataByEvent").prop("disabled", true);
+        }));
+
+        $('a.toggle-vis').on('click', function (e) {            
+            e.preventDefault();            
+            var column = table.column($(this).attr('data-column'));
+            column.visible(!column.visible());
+        });
+
+    });
+
+    function sendData(PoleFromParm, PoleToParm, SpansParm, CableFootageParm, DescriptionParm) {
+
+        var PoleFrom;
+        var PoleTo;
+        var Spans;
+        var CableFootage;
+        var Description;
+
+        PoleFrom = PoleFromParm;
+        PoleTo = PoleToParm;
+        Spans = SpansParm;
+        CableFootage = CableFootageParm;
+        Description = DescriptionParm.replace(/(?:\r\n|\r|\n)/g, '<br>');
+
+        var Dtl = "<b><u>Job Details</u></b><br><br><i>Pole From #: </i>" + PoleFrom + ",  <i>Pole To #: </i>" + PoleTo + ", <i>Spans #: </i>" + Spans + ",  <i>Cable (ft) #: </i>" + CableFootage + "<br><br><b><u>Description</u></b><br><br>" + Description;
+
+        bootbox.alert(Dtl).find('.modal-content').css({
+            'color': '#6082B6',
+            'font-size': '1.2em',
+            'margin-top': function (){
+                var w = $( window ).height();
+                var b = $(".modal-dialog").height();
+                // should not be (w-h)/2
+                var h = (w-b)/2;
+                return h+"px";
+            }
+        });
+    }
+
+    @*function ResetOptions() {
+        var apiUrl = '@Url.Action("FilterIncidentOptions")?EventId=0';
+        GetFilterOptions(apiUrl);
+        //$("#incidentTable tbody").remove();
+    }*@
+
+    function FilterOptions() {
+        // Which ones are currently filtered.
+        // Build a query based on the selected options for each unselected option
+        //// How get values for each option
+        //// How are we going to build the queries
+        // Update items based on selected items and the query we just built
+
+        // FilterIncidentOptions() API
+        var apiUrl = '@Url.Action("FilterIncidentOptions")?';
+        var ddlEventVal = $('#ddlEvent option:selected').val();
+        var ddlAssignedToVal = $('#ddlAssignedTo option:selected').val();
+        var ddlFMAVal = $('#ddlFMA option:selected').val();
+        var ddlStatusVal = $('#ddlStatus option:selected').val();
+        var ddlCustomerImpactVal = $('#ddlCustomerImpact option:selected').val();
+        var txtStartDate = $('#dtStartDate').val();
+        var txtEndDate = $('#dtEndDate').val();
+
+        apiUrl += ddlEventVal != 0 ? '&EventId=' + ddlEventVal : "";
+        apiUrl += ddlAssignedToVal != 0 ? '&AssignedTo=' + ddlAssignedToVal : "";
+        apiUrl += ddlFMAVal != 0 ? '&FMA=' + ddlFMAVal : "";
+        apiUrl += ddlStatusVal != 0 ? '&Status=' + ddlStatusVal : "";
+        apiUrl += ddlCustomerImpactVal != 0 ? '&CustomerImpactVal=' + ddlCustomerImpactVal : "";
+        apiUrl += txtStartDate != "" ? '&StartDate=' + txtStartDate : "";
+        apiUrl += txtEndDate != "" ? '&EndDate=' + txtEndDate : "";
+
+        GetFilterOptions(apiUrl);
+    }
+
+    function GetFilterOptions(apiUrl) {
+        $.getJSON(apiUrl, function (data) {
+            //DEBUG ALERTS FOR DATA COMING BACK FROM API
+            //alert("EventOptions: " + JSON.stringify(data.EventOptions));
+            //alert("AssignedToOptions: " + JSON.stringify(data.AssignedToOptions));
+            //alert("FMAOptions: " + JSON.stringify(data.FMAOptions));
+            //alert("StatusOptions: " + JSON.stringify(data.StatusOptions));
+            //alert("RegionOptions: " + JSON.stringify(data.RegionOptions));
+            //alert("CustomerImpactOptions: " + JSON.stringify(data.CustomerImpactOptions));
+            //alert("StateDate" + JSON.stringify(data.StartDate));
+            //alert("EndDate" + JSON.stringify(data.EndDate));
+
+            $('#ddlEvent').html(CreateHtmlOptions(data.EventOptions));
+            $('#ddlAssignedTo').html(CreateHtmlOptions(data.AssignedToOptions));
+            $('#ddlFMA').html(CreateHtmlOptions(data.FMAOptions));
+            $('#ddlStatus').html(CreateHtmlOptions(data.StatusOptions));
+            $('#ddlCustomerImpact').html(CreateHtmlOptions(data.CustomerImpactOptions));
+            $('#dtStarteDate').Value = data.StartDate;
+            $('#dtEndDate').Value = data.EndDate;
+
+            SortDropDownListByText('#ddlEvent');
+            SortDropDownListByText('#ddlAssignedTo');
+            SortDropDownListByText('#ddlFMA');
+        });
+    }
+
+    function CreateHtmlOptions(dataItems) {
+        var ddlItems = '<option value="">[ ALL ]</option>';
+
+        $.each(dataItems, function (i, data) {
+            selected = data.Selected ? "Selected" : "";
+            ddlItems += "<option value='" + data.Value + "' "+ selected +" >" + data.Text + "</option>";
+        });
+
+        return ddlItems;
+    }
+
+    function SortDropDownListByText(selectId) {
+        var foption = $('#' + selectId + ' option:first');
+        var soptions = $('#' + selectId + ' option:not(:first)').sort(function (a, b) {
+            return a.text = b.text ? 0 : a.text < b.text ? -1 : 1
+        });
+        $('#' + selectId).html(soptions).prepend(foption);
+    };
+
+	//Call to set Drop Downs when filter changes
+     $(function () {
+        $('.filter-item').change(function () {
+            FilterOptions();
+        });
+     });
+
+    $(function () {
+        $('#ResetFilter').click(function () {
+            ResetOptions();
+        });
+    });
+
+    function toggleDesc(tblName, link) {
+
+        var findTbl = '#' + tblName;
+        var tbl = $(findTbl);
+        var img = link.src.split("/").pop();
+
+        if (link.src.split("/").pop() == "details_open.png") {
+            img = link.src.replace("details_open.png", "details_close.png");
+        } else {
+            img = link.src.replace("details_close.png", "details_open.png");
+        }
+
+        tbl.toggle();
+        $(link).attr("src", img);
+    }
+
+    </script>
+
+
